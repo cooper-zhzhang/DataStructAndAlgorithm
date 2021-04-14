@@ -15,7 +15,6 @@ class Solution
 public:
     vector<vector<int>> merge(vector<vector<int>> &intervals)
     {
-        // 先进行一个排序
         if (intervals.size() <= 1)
         {
             return intervals;
@@ -24,83 +23,24 @@ public:
         vector<vector<int>> result;
         sort(intervals.begin(), intervals.end(), [](vector<int> &it1, vector<int> &it2) { return it1[0] < it2[0]; });
 
-        for (int i = 0; i < intervals.size() - 1; ++i)
+        result.push_back(intervals[0]);
+        for (int i = 1; i < intervals.size(); ++i)
         {
-            int begin1 = intervals[i][0];
-            int end1 = intervals[i][1];
+            vector<int> &curData = intervals[i];
+            vector<int> &data = *(result.rbegin());
 
-            int begin2 = intervals[i + 1][0];
-            int end2 = intervals[i + 1][1];
-
-            // 如果不进行合并
-            int minValue = intervals[i][0];
-            int maxValue = intervals[i][1];
-
-            if (intersect(begin1, end1, begin2, end2))
-            {// 如果进行合并则要更改值
-                intervals[i + 1][0] = minValue = min(begin1, begin2);
-                intervals[i + 1][1] = maxValue = max(end1, end2);
+            if (data[1] < curData[0])
+            {// 不相交
+                result.push_back(curData);
+                continue;
             }
-
-            vector<int> ve{minValue, maxValue};
-            if (result.empty())
-            {
-                result.push_back(ve);
-            }
-            else
-            {
-                auto &back = result.back();
-                if (back[0] == ve[0])
-                {
-                    back[1] = ve[1];
-                }
-                else
-                {
-                    result.push_back(ve);
-                }
-            }
+            
+            data[1] = data[1] > curData[1] ? data[1] : curData[1];
         }
-
-        // 最后一个元素
-        auto back_value = intervals.back();
-        auto back_value_in_result = result.back();
-
-        if (!intersect(back_value_in_result[0], back_value_in_result[1], back_value[0], back_value[1]))
-        {
-            result.push_back(back_value);
-        }
-
+        
         return result;
     }
-
-private:
-    bool intersect(int begin1, int end1, int begin2, int end2)
-    {
-        return begin2 <= end1;
-    }
 };
-
-// class Solution {
-// public:
-//     vector<vector<int>> merge(vector<vector<int>>& intervals) {
-//         int n = intervals.size();
-//         vector<vector<int>> res;
-//         vector<int> starts, ends;
-//         for (int i = 0; i < n; ++i) {
-//             starts.push_back(intervals[i][0]);
-//             ends.push_back(intervals[i][1]);
-//         }
-//         sort(starts.begin(), starts.end());
-//         sort(ends.begin(), ends.end());
-//         for (int i = 0, j = 0; i < n; ++i) {
-//             if (i == n - 1 || starts[i + 1] > ends[i]) {
-//                 res.push_back({starts[j], ends[i]});
-//                 j = i + 1;
-//             }
-//         } 
-//         return res;
-//     }
-// };
 
 int main()
 {
