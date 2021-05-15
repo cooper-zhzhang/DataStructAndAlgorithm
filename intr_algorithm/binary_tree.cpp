@@ -32,6 +32,47 @@ public:
         pRoot = nullptr;
     }
 
+    bool CheckBinary()
+    {
+        return CheckBinary(pRoot);
+    }
+
+    Node* Successor(Node *pNode)
+    {// 后继
+        if (pNode == nullptr)
+        {
+            return nullptr;
+        }
+        
+        if (pNode->right)
+        {// 1如果有右节点
+            return Minimum(pNode->right);
+        }
+
+        // 2 没有右节点的情况
+        Node *par = pNode->par;
+        while (par != nullptr && pNode == par->right)
+        {
+            pNode = par;
+            par = pNode->par;
+        }
+
+        return par;
+
+        // while (pNode && pNode->par && pNode->par->right == pNode)
+        // {
+        //     pNode = pNode->par;
+        // }
+
+        // if (pNode)
+        // {
+        //     pNode = pNode->par;
+        // }
+        
+        // return pNode;
+    }
+
+
     Node *Minimum(Node *pNode)
     {
         if (pNode == nullptr)
@@ -122,7 +163,7 @@ public:
         }
         else
         { // 两个子节点
-            pDeleteNode = Minimum(pNode->right);
+            pDeleteNode = Successor(pNode);
         }
 
         pChildNode = pDeleteNode->left ? pDeleteNode->left : pDeleteNode->right;
@@ -190,6 +231,26 @@ private:
             delete pNode;
         }
     }
+
+    bool CheckBinary(Node *pNode)
+    {
+        if (pNode)
+        {
+            if (pNode->left && pNode->left->key > pNode->key)
+            {
+                return false;
+            }
+            
+            if (pNode->right && pNode->right->key < pNode->key)
+            {
+                return false;
+            }
+
+            return (CheckBinary(pNode->right) && CheckBinary(pNode->left));
+        }
+
+        return true;
+    }
 };
 
 int main(int argc, char **argv)
@@ -209,6 +270,19 @@ int main(int argc, char **argv)
 
     binaryTree.inorder_tree_walk();
 
+    std::cout << "--------------------------------" << std::endl;
+
+    for (auto &it : sourceData)
+    {
+        Node *pNode = binaryTree.Search(it);
+        if (pNode)
+        {
+            Node *pSuccessorNode =
+            binaryTree.Successor(pNode);
+            std::cout << pNode->key << " --> " << (pSuccessorNode ? pSuccessorNode->key : -1) << std::endl;
+        }
+    }
+
     Node *p = nullptr;
 
     for (auto &it : {13, 16, 15})
@@ -224,6 +298,10 @@ int main(int argc, char **argv)
 
         binaryTree.inorder_tree_walk();
     }
+
+    std::cout << "is binary tree ? " 
+        <<  (binaryTree.CheckBinary() ? "yes" : "no")
+        << std::endl;
 
     return 0;
 }
