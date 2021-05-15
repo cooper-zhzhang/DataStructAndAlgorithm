@@ -50,26 +50,21 @@ public:
         }
 
         // 2 没有右节点的情况
-        Node *par = pNode->par;
-        while (par != nullptr && pNode == par->right)
+        // Node *par = pNode->par;
+        // while (par != nullptr && pNode == par->right)
+        // {
+        //     pNode = par;
+        //     par = pNode->par;
+        // }
+
+        // return par;
+
+        while (pNode && pNode->par && pNode->par->right == pNode)
         {
-            pNode = par;
-            par = pNode->par;
+            pNode = pNode->par;
         }
 
-        return par;
-
-        // while (pNode && pNode->par && pNode->par->right == pNode)
-        // {
-        //     pNode = pNode->par;
-        // }
-
-        // if (pNode)
-        // {
-        //     pNode = pNode->par;
-        // }
-        
-        // return pNode;
+        return pNode ? pNode->par : pNode;
     }
 
 
